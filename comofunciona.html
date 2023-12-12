@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mover Botão</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #pergunta {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            height: 100px;
+        }
+
+        #meuBotao, #botaoSim {
+            transition: 0.01s;
+            position: absolute;
+        }
+
+        #botaoSim{
+            margin-left: 100px;
+            background-color: #33cc33;
+            
+        }
+
+        #meuBotao {
+            margin-right: 100px;
+            background-color: #ff3333;
+        }
+
+        #parabens {
+            text-align: center;
+            font-size: 24px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="pergunta">Quer casar comigo?</div>
+    <button id="meuBotao" onclick="moverBotao()">Não</button>
+    <button id="botaoSim" onclick="exibirParabens()">Sim</button>
+    <div id="parabens">Já te amor meu amo &hearts;</div>
+    <script>
+        function moverBotao() {
+            const meuBotao = document.getElementById('meuBotao');
+            const novaPosicaoX = Math.floor(Math.random() * (window.innerWidth - meuBotao.clientWidth));
+            const novaPosicaoY = Math.floor(Math.random() * (window.innerHeight - meuBotao.clientHeight));
+            meuBotao.style.left = novaPosicaoX + 'px';
+            meuBotao.style.top = novaPosicaoY + 'px';
+        }
+
+        function exibirParabens() {
+            const parabens = document.getElementById('parabens');
+            parabens.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

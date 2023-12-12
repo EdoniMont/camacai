@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edoni.com.br</title>
+
+    <link rel="stylesheet" href="teste2css.css"/>
+</head>
+
+<body></body>
+
+<header class="cabeçalho"> 
+    <img class="imagem" src="AÇAÍ2.png" alt="AÇAÍ-LOGO">
+    <nav class="navegação">
+      <a href="sobreosite.html" class="titulo-1">Sobre o site</a>
+      <a href="comofunciona.html" class="titulo-2">Como funciona</a>
+      <a href="ajudenos.html" class="titulo-3">Ajude-nos</a>
+    </nav>
+    <button class="botao" id="openCameraButton">EXPERIMENTE AGORA!</button>
+</header> 
+
+<script>
+    const openCameraButton = document.getElementById("openCameraButton");
+
+    openCameraButton.addEventListener("click", function () {
+        const newWindow = window.open("camera.html", "CameraWindow", "width=800,height=600");
+
+        newWindow.onload = function () {
+            newWindow.startCamera();
+        };
+    });
+</script>
+
+    <main >
+        <section class="linha"></section>
+    </main>
+    
+
+</html>
