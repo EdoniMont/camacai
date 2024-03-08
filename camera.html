@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Teste de Rastreamento de Cores</title>
     <style>
-        
         #container {
             position: relative;
             overflow: hidden;
@@ -15,7 +14,6 @@
             display: flex;
             justify-content: center; /* Centraliza o conteúdo horizontalmente */
             align-items: center; /* Centraliza o conteúdo verticalmente */
-            
         }
         
         #p5video {
@@ -49,15 +47,14 @@
             top: 10px;
             right: 10px;
         }
-        
     </style>
 </head>
 <body>
     <div id="container">
         <div id="zoom">
-         <video id="p5video" autoplay playsinline></video>
+            <video id="p5video" autoplay playsinline></video>
         </div>
-         <canvas id="myCanvas" width="640" height="480"></canvas>
+        <canvas id="myCanvas" width="640" height="480"></canvas>
     </div>
     <div id="botoes">
         <button onclick="toggleCamera()">Toggle Camera</button>
@@ -179,8 +176,8 @@
         // Função para diminuir o zoom
         function zoomOut() {
             if (zoomLevel > zoomStep) {
-            zoomLevel -= zoomStep;
-            applyZoom();
+                zoomLevel -= zoomStep;
+                applyZoom();
             }
         } 
 
@@ -189,13 +186,10 @@
             video.style.transform = `scale(${zoomLevel})`;
         }
 
-        
-
         function applyZoom() {
             var scaleFactor = zoomLevel;
             var video = document.getElementById('p5video');
             var container = document.getElementById('container');
-            
 
             var newWidth = video.videoWidth * scaleFactor;
             var newHeight = video.videoHeight * scaleFactor;
