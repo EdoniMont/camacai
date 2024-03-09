@@ -24,7 +24,7 @@
 
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: frontCamera ? 'user' : 'environment' }
+                    video: { facingMode: frontCamera ? 'user' : { exact: 'environment' } }
                 })
                 .then(function(stream) {
                     videoElement.srcObject = stream;
