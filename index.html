@@ -16,20 +16,18 @@
             align-items: center; /* Centraliza o conteúdo verticalmente */
         }
         
-        #p5video {
+        #p5video, #myCanvas {
             position: relative;
             transform: scaleX(-1); /* Inverte horizontalmente */
-            transition: transform 0.2s ease-in-out; /* Adiciona uma transição suave ao aplicar o zoom */
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-       
+
         #myCanvas {
             position: absolute;
             width: 640px;
             height: 480px;
-            transform: scaleX(-1); /* Inverte horizontalmente */
             justify-content: center; /* Centraliza o conteúdo horizontalmente */
             align-items: center; /* Centraliza o conteúdo verticalmente */
             overflow: hidden;
@@ -46,13 +44,6 @@
             position: absolute;
             top: 10px;
             right: 10px;
-        }
-
-        #eviroment {
-            transform: scaleX(-1);
-            position: absolute;
-            width: 640px;
-            height: 480px;
         }
     </style>
 </head>
@@ -96,7 +87,7 @@
             bhiBlue = b + range, bloBlue = b - range;
         }
 
-        function setup() {
+        function setupCamera() {
             if (videoElement) {
                 videoElement.srcObject.getTracks().forEach(track => track.stop());
             }
@@ -119,6 +110,10 @@
                 .catch(function(err) {
                     console.log("Erro ao acessar a câmera: " + err);
                 });
+        }
+
+        function setup() {
+            setupCamera();
 
             setTargetRed(255, 0, 0); // Define a cor vermelha
             setTargetBlue(0, 0, 255); // Define a cor azul
@@ -157,7 +152,7 @@
                     // Escreve o nome da cor fora do retângulo, à esquerda e acima
                     ctx.font = "16px Arial";
                     ctx.fillStyle = rect.color === 'red' ? 'red' : 'blue';
-                    var colorName = rect.color === 'red' ? 'Estágio inicial' : 'Azul';
+                    var colorName = rect.color === 'red' ? '' : 'Azul';
                     ctx.fillText(colorName.toUpperCase(), textX, textY);
                 });
             });
@@ -167,12 +162,8 @@
         const zoomStep = 0.1; // Incremento/decremento do zoom
         
         function toggleCamera() {
-            if (facingMode === "environment") {
-                facingMode = "user";
-            } else {
-                facingMode = "environment";
-            }
-            setup();
+            facingMode = (facingMode === "environment") ? "user" : "environment";
+            setupCamera();
         }
 
         function zoomIn() {
@@ -180,18 +171,12 @@
             applyZoom();
         } 
 
-        // Função para diminuir o zoom
         function zoomOut() {
             if (zoomLevel > zoomStep) {
                 zoomLevel -= zoomStep;
                 applyZoom();
             }
         } 
-
-        // Aplica o zoom no vídeo
-        function applyZoom() {
-            video.style.transform = `scale(${zoomLevel})`;
-        }
 
         function applyZoom() {
             var scaleFactor = zoomLevel;
@@ -201,7 +186,6 @@
             var newWidth = video.videoWidth * scaleFactor;
             var newHeight = video.videoHeight * scaleFactor;
 
-            // Verifica se o zoom não ultrapassa os limites do contêiner
             if (newWidth <= container.offsetWidth && newHeight <= container.offsetHeight) {
                 video.style.width = newWidth + 'px';
                 video.style.height = newHeight + 'px';
