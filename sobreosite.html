@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Switch</title>
+    <style>
+        #video {
+            transform: scaleX(-1); /* Inverte horizontalmente o vídeo */
+        }
+    </style>
+</head>
+<body>
+    <h1>Camera Switch</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button onclick="switchCamera()">Switch Camera</button>
+
+    <script>
+        let frontCamera = false;
+        let videoElement = document.getElementById('video');
+
+        function switchCamera() {
+            frontCamera = !frontCamera;
+
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: frontCamera ? 'user' : 'environment' }
+                })
+                .then(function(stream) {
+                    videoElement.srcObject = stream;
+                })
+                .catch(function(error) {
+                    console.error('Error accessing the camera:', error);
+                });
+            } else {
+                console.error('getUserMedia is not supported');
+            }
+        }
+
+        // Initial setup
+        switchCamera(); // Start with the default camera
+    </script>
+</body>
+</html>
