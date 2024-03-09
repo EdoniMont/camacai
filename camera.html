@@ -47,6 +47,13 @@
             top: 10px;
             right: 10px;
         }
+
+        #user {
+            transform: scaleX(-1);
+            
+            width: 640px;
+            height: 480px;
+        }
     </style>
 </head>
 <body>
@@ -150,7 +157,7 @@
                     // Escreve o nome da cor fora do retângulo, à esquerda e acima
                     ctx.font = "16px Arial";
                     ctx.fillStyle = rect.color === 'red' ? 'red' : 'blue';
-                    var colorName = rect.color === 'red' ? 'Estágio inicial' : 'Azul';
+                    var colorName = rect.color === 'red' ? '' : 'Azul';
                     ctx.fillText(colorName.toUpperCase(), textX, textY);
                 });
             });
