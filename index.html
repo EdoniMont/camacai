@@ -1,40 +1,214 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>edoni.com.br</title>
+    <title>Teste de Rastreamento de Cores</title>
+    <style>
+        #container {
+            position: relative;
+            overflow: hidden;
+            position: relative;
+            width: 100vw; /* Largura total da janela do navegador */
+            height: 100vh; /* Altura total da janela do navegador */
+            background-color: black; /* Cor de fundo do contêiner */
+            display: flex;
+            justify-content: center; /* Centraliza o conteúdo horizontalmente */
+            align-items: center; /* Centraliza o conteúdo verticalmente */
+        }
+        
+        #p5video {
+            position: relative;
+            transform: scaleX(-1); /* Inverte horizontalmente */
+            transition: transform 0.2s ease-in-out; /* Adiciona uma transição suave ao aplicar o zoom */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+       
+        #myCanvas {
+            position: absolute;
+            width: 640px;
+            height: 480px;
+            transform: scaleX(-1); /* Inverte horizontalmente */
+            justify-content: center; /* Centraliza o conteúdo horizontalmente */
+            align-items: center; /* Centraliza o conteúdo verticalmente */
+            overflow: hidden;
+        }
 
-    <link rel="stylesheet" href="teste2css.css"/>
+        #zoom {
+            position: absolute;
+            width: 640px; /* Largura do contêiner de vídeo */
+            height: 480px; /* Altura do contêiner de vídeo */
+            overflow: hidden; /* Impede que o vídeo ultrapasse as bordas do contêiner */
+        }
+        
+        #botoes {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #eviroment {
+            transform: scaleX(-1);
+            position: absolute;
+            width: 640px;
+            height: 480px;
+        }
+    </style>
 </head>
+<body>
+    <div id="container">
+        <div id="zoom">
+            <video id="p5video" autoplay playsinline></video>
+        </div>
+        <canvas id="myCanvas" width="640" height="480"></canvas>
+    </div>
+    <div id="botoes">
+        <button onclick="toggleCamera()">Toggle Camera</button>
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+    </div>
 
-<body></body>
+    <script src="p5-min.js"></script>
+    <script src="p5.2.js"></script>
+    <script src="tracking-min.js"></script>
+    <script>
+        var tracker;
+        var rhiRed, ghiRed, bhiRed;
+        var rloRed, gloRed, bloRed;
+        var rhiBlue, ghiBlue, bhiBlue;
+        var rloBlue, gloBlue, bloBlue;
+        var videoElement;
+       
+        var facingMode = "environment"; // Inicia com a câmera traseira
 
-<header class="cabeçalho"> 
-    <img class="imagem" src="AÇAÍ2.png" alt="AÇAÍ-LOGO">
-    <nav class="navegação">
-      <a href="sobreosite.html" class="titulo-1">Sobre o site</a>
-      <a href="comofunciona.html" class="titulo-2">Como funciona</a>
-      <a href="ajudenos.html" class="titulo-3">Ajude-nos</a>
-    </nav>
-    <button class="botao" id="openCameraButton">EXPERIMENTE AGORA!</button>
-</header> 
+        function setTargetRed(r, g, b, range) {
+            range = range || 100;
+            rhiRed = r + range, rloRed = r - range;
+            ghiRed = g + range, gloRed = g - range;
+            bhiRed = b + range, bloRed = b - range;
+        }
 
-<script>
-    const openCameraButton = document.getElementById("openCameraButton");
+        function setTargetBlue(r, g, b, range) {
+            range = range || 100;
+            rhiBlue = r + range, rloBlue = r - range;
+            ghiBlue = g + range, gloBlue = g - range;
+            bhiBlue = b + range, bloBlue = b - range;
+        }
 
-    openCameraButton.addEventListener("click", function () {
-        const newWindow = window.open("camera.html", "CameraWindow", "width=800,height=600");
+        function setup() {
+            if (videoElement) {
+                videoElement.srcObject.getTracks().forEach(track => track.stop());
+            }
+            var constraints = {
+                audio: false,
+                video: {
+                    facingMode: facingMode, // Abre a câmera conforme a variável facingMode
+                    width: 640,
+                    height: 480
+                }
+            };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream) {
+                    videoElement = document.getElementById('p5video');
+                    videoElement.srcObject = stream;
+                    videoElement.onloadedmetadata = function() {
+                        videoElement.play();
+                    };
+                })
+                .catch(function(err) {
+                    console.log("Erro ao acessar a câmera: " + err);
+                });
 
-        newWindow.onload = function () {
-            newWindow.startCamera();
-        };
-    });
-</script>
+            setTargetRed(255, 0, 0); // Define a cor vermelha
+            setTargetBlue(0, 0, 255); // Define a cor azul
 
-    <main >
-        <section class="linha"></section>
-    </main>
-    
+            tracking.ColorTracker.registerColor('red', function(r, g, b) {
+                return (r <= rhiRed && r >= rloRed &&
+                        g <= ghiRed && g >= gloRed &&
+                        b <= bhiRed && b >= bloRed);
+            });
 
+            tracking.ColorTracker.registerColor('blue', function(r, g, b) {
+                return (r <= rhiBlue && r >= rloBlue &&
+                        g <= ghiBlue && g >= gloBlue &&
+                        b <= bhiBlue && b >= bloBlue);
+            });
+
+            tracker = new tracking.ColorTracker(['red', 'blue']);
+            tracker.minDimension = 12;
+
+            tracking.track('#p5video', tracker, { camera: true });
+
+            tracker.on('track', function(event) {
+                var canvas = document.getElementById('myCanvas');
+                var ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                event.data.forEach(function(rect) {
+                    ctx.strokeStyle = rect.color;
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+                    // Define a posição do texto fora do retângulo, à esquerda e acima
+                    var textX = rect.x - 50;
+                    var textY = rect.y - 16;
+
+                    // Escreve o nome da cor fora do retângulo, à esquerda e acima
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = rect.color === 'red' ? 'red' : 'blue';
+                    var colorName = rect.color === 'red' ? 'Estágio inicial' : 'Azul';
+                    ctx.fillText(colorName.toUpperCase(), textX, textY);
+                });
+            });
+        }
+
+        let zoomLevel = 1.0; // Nível de zoom inicial
+        const zoomStep = 0.1; // Incremento/decremento do zoom
+        
+        function toggleCamera() {
+            if (facingMode === "environment") {
+                facingMode = "user";
+            } else {
+                facingMode = "environment";
+            }
+            setup();
+        }
+
+        function zoomIn() {
+            zoomLevel += zoomStep;
+            applyZoom();
+        } 
+
+        // Função para diminuir o zoom
+        function zoomOut() {
+            if (zoomLevel > zoomStep) {
+                zoomLevel -= zoomStep;
+                applyZoom();
+            }
+        } 
+
+        // Aplica o zoom no vídeo
+        function applyZoom() {
+            video.style.transform = `scale(${zoomLevel})`;
+        }
+
+        function applyZoom() {
+            var scaleFactor = zoomLevel;
+            var video = document.getElementById('p5video');
+            var container = document.getElementById('container');
+
+            var newWidth = video.videoWidth * scaleFactor;
+            var newHeight = video.videoHeight * scaleFactor;
+
+            // Verifica se o zoom não ultrapassa os limites do contêiner
+            if (newWidth <= container.offsetWidth && newHeight <= container.offsetHeight) {
+                video.style.width = newWidth + 'px';
+                video.style.height = newHeight + 'px';
+            }
+        }
+
+        setup(); // Inicia o setup quando a página é carregada
+    </script>
+</body>
 </html>
