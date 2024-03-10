@@ -49,6 +49,10 @@
             right: 10px;
         }
 
+        #traseira {
+            transform: scaleX(-1); /* Inverte horizontalmente */
+        }
+
     </style>
 </head>
 <body>
@@ -59,9 +63,14 @@
         <canvas id="myCanvas" width="640" height="480"></canvas>
     </div>
     <div id="botoes">
-        <button onclick="toggleCamera()">Toggle Camera</button>
+        
+        <div id="traseira">
+          <button onclick="toggleCamera()">Toggle Camera</button>
+        </div>
+       
         <button onclick="zoomIn()">Zoom In</button>
         <button onclick="zoomOut()">Zoom Out</button>
+        
     </div>
 
     <script src="p5-min.js"></script>
@@ -169,7 +178,6 @@
             } else {
                 facingMode = "environment";
             }
-            videoElement.style.transform = "scaleX(-1)";
             setup();
         }
 
