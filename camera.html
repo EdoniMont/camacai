@@ -168,7 +168,8 @@
         
         function toggleCamera() {
             if (facingMode === "environment") {
-                facingMode = "user";
+                facingMode = "user", 
+                videoElement.style.transform = "scaleX(-1)";
             } else {
                 facingMode = "environment";
             }
