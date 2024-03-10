@@ -91,6 +91,7 @@
             var constraints = {
                 audio: false,
                 video: {
+                    facingMode: facingMode, // Abre a câmera conforme a variável facingMode
                     width: 640,
                     height: 480
                 }
@@ -160,7 +161,12 @@
         const zoomStep = 0.1; // Incremento/decremento do zoom
         
         function toggleCamera() {
-            setupCamera();
+            if (facingMode === "environment") {
+                facingMode = "user";
+            } else {
+                facingMode = "environment";
+            }
+            setup();
         }
 
         function zoomIn() {
