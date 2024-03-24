@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Rastreamento de Cores</title>
+    <style>
+        #container {
+            position: relative;
+            overflow: hidden;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: scaleX(-1);
+        }
+        
+        #p5video {
+            position: relative;
+            transition: transform 0.2s ease-in-out;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            
+        }
+
+       
+       
+        #myCanvas {
+            position: absolute;
+            width: 640px;
+            height: 480px;
+            
+            overflow: hidden;
+        }
+
+        #zoom {
+            position: absolute;
+            width: 640px;
+            height: 480px;
+            overflow: hidden;
+        }
+        
+        #botoes {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="zoom">
+            <video id="p5video" autoplay playsinline></video>
+        </div>
+        <canvas id="myCanvas" width="640" height="480"></canvas>
+    </div>
+    <div id="botoes">
+      
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+    </div>
+
+    <script src="p5-min.js"></script>
+    <script src="p5.2.js"></script>
+    <script src="tracking-min.js"></script>
+    <script>
+    var tracker;
+    var rhiRed, ghiRed, bhiRed;
+    var rloRed, gloRed, bloRed;
+    var rhiBlue, ghiBlue, bhiBlue;
+    var rloBlue, gloBlue, bloBlue;
+    var rhiPurple, ghiPurple, bhiPurple; // Adicionado
+    var rloPurple, gloPurple, bloPurple; // Adicionado
+    var rhiGreen, ghiGreen, bhiGreen; // Adicionado
+    var rloGreen, gloGreen, bloGreen; // Adicionado
+    var videoElement;
+    var scaleFactor = 1.0;
+
+    
+
+    function setTargetRed(r, g, b, range) {
+        range = range || 100;
+        rhiRed = r + range, rloRed = r - range;
+        ghiRed = g + range, gloRed = g - range;
+        bhiRed = b + range, bloRed = b - range;
+    }
+
+    function setTargetBlue(r, g, b, range) {
+        range = range || 100;
+        rhiBlue = r + range, rloBlue = r - range;
+        ghiBlue = g + range, gloBlue = g - range;
+        bhiBlue = b + range, bloBlue = b - range;
+    }
+
+    function setTargetPurple(r, g, b, range) { // Adicionado
+        range = range || 50;
+        rhiPurple = r + range, rloPurple = r - range;
+        ghiPurple = g + range, gloPurple = g - range;
+        bhiPurple = b + range, bloPurple = b - range;
+    }
+
+    function setTargetGreen(r, g, b, range) { // Adicionado
+        range = range || 50;
+        rhiGreen = r + range, rloGreen = r - range;
+        ghiGreen = g + range, gloGreen = g - range;
+        bhiGreen = b + range, bloGreen = b - range;
+    }
+
+    function setup() {
+        if (videoElement) {
+            videoElement.srcObject.getTracks().forEach(track => track.stop());
+        }
+        var constraints = {
+            audio: false,
+            video: {
+                width: 640,
+                height: 480
+            }
+        };
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(stream) {
+                videoElement = document.getElementById('p5video');
+                videoElement.srcObject = stream;
+                videoElement.onloadedmetadata = function() {
+                    videoElement.play();
+                };
+            })
+            .catch(function(err) {
+                console.log("Erro ao acessar a câmera: " + err);
+            });
+
+        setTargetRed(255, 0, 0);
+        setTargetBlue(0, 0, 255);
+        setTargetPurple(128, 0, 128); // Adicionado
+        setTargetGreen(0, 128, 0); // Adicionado
+
+        tracking.ColorTracker.registerColor('red', function(r, g, b) {
+            return (r <= rhiRed && r >= rloRed &&
+                    g <= ghiRed && g >= gloRed &&
+                    b <= bhiRed && b >= bloRed);
+        });
+
+        tracking.ColorTracker.registerColor('blue', function(r, g, b) {
+            return (r <= rhiBlue && r >= rloBlue &&
+                    g <= ghiBlue && g >= gloBlue &&
+                    b <= bhiBlue && b >= bloBlue);
+        });
+
+        tracking.ColorTracker.registerColor('purple', function(r, g, b) { // Adicionado
+            return (r <= rhiPurple && r >= rloPurple &&
+                    g <= ghiPurple && g >= gloPurple &&
+                    b <= bhiPurple && b >= bloPurple);
+        });
+
+        tracking.ColorTracker.registerColor('green', function(r, g, b) { // Adicionado
+            return (r <= rhiGreen && r >= rloGreen &&
+                    g <= ghiGreen && g >= gloGreen &&
+                    b <= bhiGreen && b >= bloGreen);
+        });
+
+        tracker = new tracking.ColorTracker(['red', 'blue', 'purple', 'green']); // Atualizado
+        tracker.minDimension = 12;
+
+        tracking.track('#p5video', tracker, { camera: true });
+
+        tracker.on('track', function(event) {
+            var canvas = document.getElementById('myCanvas');
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            event.data.forEach(function(rect) {
+                ctx.strokeStyle = rect.color;
+                ctx.lineWidth = 3;
+                ctx.strokeRect(rect.x * scaleFactor, rect.y * scaleFactor, rect.width * scaleFactor, rect.height * scaleFactor);
+            });
+        });
+    }
+
+    const zoomStep = 0.1;
+
+    function toggleCamera() {
+        if (facingMode === "environment") {
+            facingMode = "user";
+        } else {
+            facingMode = "environment";
+        }
+        setup();
+    }
+
+    function zoomIn() {
+        scaleFactor += zoomStep;
+        applyZoom();
+    }
+
+    function zoomOut() {
+        if (scaleFactor > zoomStep) {
+            scaleFactor -= zoomStep;
+            applyZoom();
+        }
+    }
+
+    function applyZoom() {
+        var video = document.getElementById('p5video');
+        var container = document.getElementById('container');
+
+        var newWidth = video.videoWidth * scaleFactor;
+        var newHeight = video.videoHeight * scaleFactor;
+
+        if (newWidth <= container.offsetWidth && newHeight <= container.offsetHeight) {
+            video.style.width = newWidth + 'px';
+            video.style.height = newHeight + 'px';
+        }
+    }
+
+    setup();
+</script>
+</body>
+</html>

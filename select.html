@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center; /* Centraliza o conteúdo horizontalmente */
+            align-items: center; /* Centraliza o conteúdo verticalmente */
+        }
+
+        #titulo{
+            height: 60%;
+            
+            left: 50%;
+            font-size: 30px;
+            font-family: 'Amatic SC', sans-serif; 
+            position: relative;
+        }
+
+        
+
+        #botoes {
+            display: flex;
+            flex-direction: column; /* Alinha os botões verticalmente */
+            border: 4px solid #000; /* Adiciona uma borda sólida preta de 4px */
+            padding: 100px; /* Adiciona espaço interno para os botões */
+            border-radius: 10px; /* Adiciona bordas arredondadas */
+            border-radius: 3%;
+            position: relative;
+        }
+
+        .botao1{
+            margin: 30px; /* Adiciona um espaço entre os botões */
+            border: none;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            border-radius: 5%;
+            background-color: #851c85;
+            /*box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;*/
+            font-weight: 300;
+            padding: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s; /* Adiciona transições suaves para a mudança de cor e sombra */
+        }
+        
+        .botao2 {
+            margin: 30px; /* Adiciona um espaço entre os botões */
+            border: none;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            border-radius: 5%;
+            background-color: #8d5b8d;
+            /*box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;*/
+            font-weight: 300;
+            padding: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s; /* Adiciona transições suaves para a mudança de cor e sombra */
+        }
+
+        .botao1:hover{ 
+            background-color: #5b1a97; /* Cor de fundo quando o mouse passa por cima */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra quando o mouse passa por cima */
+
+        }
+
+        .botao2:hover{ 
+            background-color: #6c4d88; /* Cor de fundo quando o mouse passa por cima */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra quando o mouse passa por cima */
+        }
+       
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div id="titulo">
+        <a>SELECIONE A OPÇÃO:</a>
+    </div>
+
+    <div id="botoes">
+        <button class="botao1" id="openCameraButton1">Câmera frontal</button>
+        <button class="botao2" id="openCameraButton2">Câmera traseira</button>
+        
+    </div>
+
+    <script>
+       const openCameraButton1 = document.getElementById("openCameraButton1");
+       const openCameraButton2 = document.getElementById("openCameraButton2");
+
+        openCameraButton1.addEventListener("click", function () {
+            // Abre uma nova janela ou guia com a página camera.html
+            const newWindow = window.open("cameraf.html", "CameraWindow1", "width=800,height=600");
+
+            // Se necessário, você pode executar alguma função quando a nova janela/guia é carregada
+            newWindow.onload = function () {
+                // Por exemplo, você pode chamar uma função na página aberta
+                newWindow.startCamera();
+            };
+        });
+
+        openCameraButton2.addEventListener("click", function () {
+            // Abre uma nova janela ou guia com a página camera.html
+            const newWindow = window.open("camera.html", "CameraWindow2", "width=800,height=600");
+
+            // Se necessário, você pode executar alguma função quando a nova janela/guia é carregada
+            newWindow.onload = function () {
+                // Por exemplo, você pode chamar uma função na página aberta
+                newWindow.startCamera();
+            };
+        });
+    </script>
+</body>
+</html>
